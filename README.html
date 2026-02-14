@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для Малики ❤️</title>
+    
+    <style>
+        /* --- CSS VARIABLES & THEMES --- */
+        :root {
+            --primary: #ff4d6d;
+            --primary-dark: #c9184a;
+            --secondary: #ffb3c1;
+            --bg-color: #fff0f3;
+            --text-color: #590d22;
+            --card-bg: #ffffff;
+            --shadow: 0 10px 30px -10px rgba(255, 77, 109, 0.3);
+            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --border-radius: 24px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        body.theme-night {
+            --primary: #ff758f;
+            --primary-dark: #ff4d6d;
+            --secondary: #2d2d2d;
+            --bg-color: #1a1a1a;
+            --text-color: #ffe5ec;
+            --card-bg: #2d2d2d;
+            --shadow: 0 10px 30px -10px rgba(0,0,0, 0.5);
+        }
+
+        /* --- GLOBAL STYLES --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background 0.5s ease, color 0.5s ease;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 120px;
+            position: relative;
+            z-index: 2;
+        }
+
+        section {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        section.visible { opacity: 1; transform: translateY(0); }
+
+        h1, h2, h3 { text-align: center; margin-bottom: 15px; }
+        h1 { font-size: 2.2rem; font-weight: 800; color: var(--primary); }
+
+        /* --- BACKGROUND ANIMATIONS --- */
+        .bg-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .bg-heart {
+            position: absolute;
+            color: var(--primary);
+            opacity: 0.1;
+            animation: floatUp linear infinite;
+        }
+        .bg-text {
+            position: absolute;
+            color: var(--primary-dark);
+            font-weight: bold;
+            opacity: 0;
+            white-space: nowrap;
+            animation: floatText 8s linear forwards;
+            font-size: 1rem;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        }
+
+        @keyframes floatUp { to { transform: translateY(-100vh) rotate(360deg); } }
+        @keyframes floatText {
+            0% { transform: translateY(100vh) scale(0.8); opacity: 0; }
+            10% { opacity: 0.4; }
+            90% { opacity: 0.4; }
+            100% { transform: translateY(-20vh) scale(1.2); opacity: 0; }
+        }
+
+        /* --- HEADER & CONTROLS --- */
+        .top-controls { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 20px; }
+        .icon-btn {
+            background: var(--card-bg);
+            padding: 0 15px;
+            height: 44px;
+            border-radius: 22px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            color: var(--primary);
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        /* --- COUNTER --- */
+        .counter-display { text-align: center; padding: 20px 0; }
+        .big-number {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1;
+            display: block;
+            text-shadow: 2px 2px 0px var(--secondary);
+        }
+
+        /* --- LOVE METER --- */
+        .progress-bar { height: 12px; background: var(--secondary); border-radius: 10px; overflow: hidden; position: relative; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-dark)); width: 0%; transition: width 0.5s ease; }
+
+        /* --- GAME 1: CATCH --- */
+        .game-area {
+            height: 200px;
+            background: linear-gradient(to bottom, var(--bg-color) 0%, #fff 100%);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            border: 2px dashed var(--secondary);
+            margin-top: 15px;
+        }
+        .catch-heart {
+            position: absolute;
+            font-size: 2rem;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.1s;
+        }
+
+        /* --- GAME 2: PUZZLE --- */
+        .puzzle-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            width: 180px;
+            margin: 15px auto;
+        }
+        .puzzle-piece {
+            width: 55px;
+            height: 55px;
+            background: var(--secondary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .puzzle-piece.correct { background: #7ae582; color: white; }
+
+        /* --- REASONS --- */
+        .reasons-list { display: flex; flex-direction: column; gap: 12px; }
+        .reason-card {
+            background: var(--bg-color);
+            padding: 15px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform 0.3s;
+            border-left: 5px solid var(--primary);
+        }
+        .reason-card:hover { transform: translateX(10px); background: #fff; }
+        .reason-num { font-weight: 900; color: var(--primary); min-width: 35px; }
+
+        .surprise-btn {
+            width: 100%; padding: 20px;
+            background: linear-gradient(45deg, #ff4d6d 0%, #ff8fa3 100%);
+            color: white; font-weight: bold; border-radius: 20px;
+            animation: pulse 2s infinite;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+        }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+
+        #kiss-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(89, 13, 34, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            backdrop-filter: blur(8px);
+        }
+        #kiss-modal h2 { font-size: 2.5rem; margin-bottom: 20px; animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes bounceIn { from { transform: scale(0.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .tyk-container { text-align: center; margin-top: 20px; }
+        .tyk-btn {
+            background: transparent;
+            color: var(--primary);
+            font-size: 0.8rem;
+            opacity: 0.6;
+            padding: 5px 15px;
+            border: 1px solid var(--primary);
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        footer { text-align: center; padding: 40px 0 20px 0; opacity: 0.5; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+<div class="bg-layer" id="bg-hearts"></div>
+<div class="bg-layer" id="bg-text"></div>
+
+<div id="kiss-modal" onclick="this.style.display='none'">
+    <h2 id="kiss-text">хачу типя зацемкать а патом 😈😈😈</h2>
+    <p>(нажми куда угодно, чтобы закрыть)</p>
+</div>
+
+<div class="container">
+    
+    <header class="top-controls">
+        <button class="icon-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+        <a href="https://music.yandex.ru/album/30235395/track/123755730" target="_blank" class="icon-btn">
+            🎵 Наша музыка
+        </a>
+    </header>
+
+    <section id="intro">
+        <p style="text-align: center; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px;">Для моей булочки</p>
+        <h1 id="recipient-name">Малика ❤️</h1>
+        <p style="text-align: center;">С 14 февраля тебя, любимая! Ты моё счастье.</p>
+        <button class="surprise-btn" id="surprise-btn" style="margin-top: 20px;">
+            💎 Открой секретное послание
+        </button>
+    </section>
+
+    <section id="counter">
+        <h3>Мы вместе уже</h3>
+        <div class="counter-display">
+            <span class="big-number" id="days-count">0</span>
+            <div style="font-size: 1rem; opacity: 0.8; margin-top: 10px;">дней бесконечного кайфа</div>
+        </div>
+        <p style="text-align: center; font-size: 0.8rem;">с 07.07.2024</p>
+    </section>
+
+    <section id="love-meter">
+        <h3>Уровень обожания</h3>
+        <div class="progress-bar"><div class="progress-fill" id="love-fill"></div></div>
+        <div id="love-text" style="text-align: center; font-size: 0.8rem; margin-top: 10px; font-weight: bold;">0% — Лови сердца внизу!</div>
+    </section>
+
+    <section id="game-section">
+        <h3>Игра 1: Лови сердца</h3>
+        <div class="game-area" id="game-area"></div>
+    </section>
+
+    <section id="puzzle-section">
+        <h3>Игра 2: Собери сердце</h3>
+        <p style="text-align: center; font-size: 0.75rem; opacity: 0.6;">Нажми на части в правильном порядке!</p>
+        <div class="puzzle-grid" id="puzzle-grid"></div>
+        <p id="puzzle-status" style="text-align: center; font-size: 0.8rem; margin-top: 10px; font-weight: bold;"></p>
+    </section>
+
+    <section id="reasons-section">
+        <h2 id="reasons-title" style="color: var(--primary);">∞ причин моей любви</h2>
+        <div class="reasons-list" id="reasons-list"></div>
+    </section>
+
+    <footer>
+        <p>С любовью из России в Казахстан 🇷🇺❤️🇰🇿</p>
+        <p>© 2024 — Навсегда</p>
+        <div class="tyk-container">
+            <button class="tyk-btn" onclick="showKiss()">тык</button>
+        </div>
+    </footer>
+</div>
+
+<script>
+    const CONFIG = {
+        name: "Малика",
+        startDate: "2024-07-07",
+        floatingPhrases: [
+            "Люблю тебя", "Ты бука", "Хря", "Мва", "Муаамм", 
+            "Ты мая хрякса", "Люблю тепя", "Ты ваще жопа", "Хехе", 
+            "Я всегда буду рядом", "Моя Малика", "Пука хрюка", "Моя булочка"
+        ],
+        reasons: [
+            "Твоя невероятная моська", "Твоя шикарная попи", "Твой смех", "С тобой я могу не стесняться быть собой",
+            "С тобой я могу рассказывать обо всем", "С тобой я могу нести полный бред", "С тобой я могу не бояться осуждения",
+            "С тобой мы можем осуждать всех", "Люблю как ты слушаешь меня даже когда не понимаешь что я говорю", "Твоя поддержка в трудные минуты",
+            "Твои сонные голосовые", "Наши ночные разговоры", "Твои фотографии которые я храню", "Твоя доброта к миру", "Как ты дуешь губки",
+            "Твои красивые глаза", "Твой запах даже через экран я его помню", "Твои мечты которыми ты делишься", "Твоя вера в меня",
+            "Твоё чувство юмора", "Твоя искренность", "Твои большие ладошки", "Как ты злишься это очень мило", "Твоя забота о моем здоровье",
+            "Наши общие шутки", "Дата нашего начала 07.07", "Твои стикеры в телеграме", "Твой музыкальный вкус", "Твоё терпение",
+            "Твои сообщения по утрам", "Твой характер", "Как ты переживаешь за меня", "Твои рассказы о дне", "Твои кулинарные таланты",
+            "Твой стиль в одежде", "Твоя нежная кожа", "То как ты называешь меня пука хрюка", "Твои взгляды на жизнь", "Наши планы на будущее",
+            "Твоё умение слушать", "Твоя энергия", "Ты делаешь меня лучше", "Твоё доверие ко мне", "Твои капризы", "Как ты спишь",
+            "Твоя мудрость", "Твой уют", "Твои теплые слова", "Как ты радуешься мелочам", "Твоя уникальность",
+            "Ты самое дорогое что у меня есть", "Твой голос в трубке", "Твоя манера переписываться", "Твоя преданность", "Твоя любовь к животным",
+            "Твои комплименты мне", "Твоя сила воли", "Ты вдохновляешь меня", "Твой внутренний мир", "Твои милые привычки",
+            "Как ты смотришь фильмы со мной", "Твоя скромность", "Твоё умение прощать", "Твоя честность", "Твоя улыбка во все зубы",
+            "Твои нежные губы", "Твой мягкий голос", "Твоя целеустремленность", "Твоя харизма", "Твои смешные видео",
+            "Твоя поддержка моих идей", "Как ты обнимаешь меня в моих мечтах", "Твоя женственность", "Твоя легкость", "Твоя страсть",
+            "Твой интеллект", "Как ты поешь", "Твоя естественная красота", "Твой оптимизм", "Твоя ласка", "Твой взгляд когда ты серьезная",
+            "Твои сообщения как ты?", "Твоё присутствие в моей жизни", "Твоя вера в наше будущее", "Твоё умение удивлять", "Твоя непредсказуемость",
+            "Твоя гордость", "Твоя чуткость", "Твой комфорт", "Твоё тепло", "Твоя магия", "Твоё сияние", "Ты просто лучшая во всей вселенной",
+            "Твоё сердце", "То что ты выбрала меня", "Твой бесконечный свет", "То что ты есть", "Ты моя единственная", "Наше навсегда"
+        ]
+    };
+
+    let loveScore = 0;
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function init() {
+        const start = new Date(CONFIG.startDate);
+        const days = Math.floor((new Date() - start) / (1000 * 60 * 60 * 24));
+        document.getElementById('days-count').textContent = days;
+
+        const list = document.getElementById('reasons-list');
+        CONFIG.reasons.forEach((reason, i) => {
+            const card = document.createElement('div');
+            card.className = 'reason-card';
+            const num = (i === CONFIG.reasons.length - 1) ? "∞" : i + 1;
+            card.innerHTML = `<span class="reason-num">#${num}</span> <span>${reason}</span>`;
+            list.appendChild(card);
+        });
+
+        setInterval(createFloatingText, 3000);
+        setInterval(createHeart, 1500);
+        setInterval(spawnGameHeart, 1200);
+        initPuzzle();
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('section').forEach(s => observer.observe(s));
+    }
+
+    function createFloatingText() {
+        const div = document.createElement('div');
+        div.className = 'bg-text';
+        div.textContent = CONFIG.floatingPhrases[Math.floor(Math.random() * CONFIG.floatingPhrases.length)];
+        div.style.left = Math.random() * 70 + 15 + 'vw';
+        document.getElementById('bg-text').appendChild(div);
+        setTimeout(() => div.remove(), 8000);
+    }
+
+    function createHeart() {
+        const h = document.createElement('div');
+        h.className = 'bg-heart';
+        h.textContent = ['❤️', '💖', '💝', '✨'][Math.floor(Math.random()*4)];
+        h.style.left = Math.random() * 100 + 'vw';
+        h.style.fontSize = Math.random() * 20 + 15 + 'px';
+        h.style.animationDuration = Math.random() * 3 + 5 + 's';
+        document.getElementById('bg-hearts').appendChild(h);
+        setTimeout(() => h.remove(), 8000);
+    }
+
+    function spawnGameHeart() {
+        const area = document.getElementById('game-area');
+        if (!area) return;
+        const h = document.createElement('div');
+        h.className = 'catch-heart';
+        h.textContent = '❤️';
+        h.style.left = Math.random() * 85 + '%';
+        h.style.top = '200px';
+        area.appendChild(h);
+
+        const anim = h.animate([
+            { top: '200px', opacity: 1 },
+            { top: '-40px', opacity: 0 }
+        ], { duration: 2500, easing: 'linear' });
+
+        h.onclick = () => {
+            updateLove(2);
+            playPop();
+            h.textContent = '✨';
+            setTimeout(() => h.remove(), 100);
+        };
+        anim.onfinish = () => h.remove();
+    }
+
+    /* Puzzle Game Logic */
+    const puzzleTarget = ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '💖'];
+    let puzzleState = [];
+    function initPuzzle() {
+        const grid = document.getElementById('puzzle-grid');
+        grid.innerHTML = '';
+        puzzleState = [...puzzleTarget].sort(() => Math.random() - 0.5);
+        let nextIndex = 0;
+
+        puzzleState.forEach((emoji, i) => {
+            const piece = document.createElement('div');
+            piece.className = 'puzzle-piece';
+            piece.textContent = emoji;
+            piece.onclick = () => {
+                if (emoji === puzzleTarget[nextIndex]) {
+                    piece.classList.add('correct');
+                    piece.style.pointerEvents = 'none';
+                    nextIndex++;
+                    updateLove(3);
+                    playPop();
+                    if (nextIndex === puzzleTarget.length) {
+                        document.getElementById('puzzle-status').textContent = "Ура! Ты собрала моё сердце! 🎉";
+                        setTimeout(initPuzzle, 3000);
+                    }
+                } else {
+                    piece.style.background = '#ff4d6d';
+                    setTimeout(() => piece.style.background = '', 300);
+                }
+            };
+            grid.appendChild(piece);
+        });
+    }
+
+    function updateLove(pts) {
+        loveScore = Math.min(loveScore + pts, 100);
+        document.getElementById('love-fill').style.width = loveScore + '%';
+        let msg = loveScore + "% — Наполняй дальше!";
+        if(loveScore > 70) msg = "Почти заполнено! 🔥";
+        if(loveScore >= 100) msg = "∞% ЛЮБВИ! ТЫ МОЯ ЖИЗНЬ! ♾️";
+        document.getElementById('love-text').textContent = msg;
+    }
+
+    function playPop() {
+        try {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        } catch(e) {}
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle('theme-night');
+        document.getElementById('theme-btn').textContent = document.body.classList.contains('theme-night') ? '☀️' : '🌙';
+    }
+
+    function showKiss() {
+        const modal = document.getElementById('kiss-modal');
+        modal.style.display = 'flex';
+        playPop();
+        for(let i=0; i<15; i++) setTimeout(createHeart, i * 50);
+    }
+
+    document.getElementById('surprise-btn').onclick = function() {
+        alert("Малика, с 14 февраля тебя, булочка! Ты самое вкусное и милое, что есть в этом мире. Люблю тебя безумно! ❤️");
+        updateLove(100);
+    };
+
+    window.onload = init;
+</script>
+</body>
+</html>
